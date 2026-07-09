@@ -1,0 +1,8 @@
+../Core/Src/ev_control.c:41:6:EV_Init	1
+../Core/Src/ev_control.c:51:10:Read_ADC_Channel	1
+../Core/Src/ev_control.c:76:6:EV_ReadADC	4
+../Core/Src/ev_control.c:104:6:EV_Update	9
+../Core/Src/ev_control.c:169:6:EV_SetDriveMode	2
+../Core/Src/ev_control.c:175:6:EV_InjectSpeed	3
+../Core/Src/ev_control.c:180:6:EV_InjectSOC	3
+../Core/Src/ev_control.c:185:6:EV_InjectMotorTemp	3

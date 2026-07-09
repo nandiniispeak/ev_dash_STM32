@@ -1,0 +1,7 @@
+../Core/Src/ultrasonic.c:22:24:TIM2_GetUS	4	static
+../Core/Src/ultrasonic.c:27:13:Delay_US	24	static
+../Core/Src/ultrasonic.c:33:6:HCSR04_Init	16	static
+../Core/Src/ultrasonic.c:44:17:HCSR04_Read	48	static,ignoring_inline_asm
+../Core/Src/ultrasonic.c:96:6:HCSR04_ReadAll	24	static
+../Core/Src/ultrasonic.c:104:9:HCSR04_GetDistance	16	static
+../Core/Src/ultrasonic.c:105:9:HCSR04_IsValid	16	static
