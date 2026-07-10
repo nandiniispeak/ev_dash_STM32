@@ -66,6 +66,7 @@ $$\text{Speed (km/h)} = f \times \text{Wheel Calibration Constant}$$
 To calculate distance ($D$) from the HC-SR04 sensors, the Input Capture timer tracks the time the Echo pin remains high ($\text{Ticks}_{\text{echo}}$) at a given 
 
 Timer Clock Frequency:
+
 $$\text{Time (s)} = \frac{\text{Ticks}_{\text{echo}}}{\text{Timer Clock Frequency (Hz)}}$$
 
 $$\text{Distance (cm)} = \frac{\text{Time (s)} \times 34300 \text{ cm/s}}{2}$$
@@ -74,6 +75,7 @@ $$\text{Distance (cm)} = \frac{\text{Time (s)} \times 34300 \text{ cm/s}}{2}$$
 The forward collision avoidance framework computes real-time proximity degradation rates relative to instantaneous velocity to identify braking windows:
 
 $$\text{Time-to-Collision (s)} = \frac{\text{Front Distance (m)}}{\text{Speed (m/s)}}$$
+
 $$\text{Emergency State} = \begin{cases} 
       \text{ACTIVE (EBA Enabled),} & \text{if } \text{TTC} \le \text{Threshold}_{\text{critical}} \\
       \text{WARNING (FCW Alert),} & \text{if } \text{Threshold}_{\text{critical}} < \text{TTC} \le \text{Threshold}_{\text{warning}} \\
