@@ -54,16 +54,20 @@ $$\text{Remaining Range (km)} = \left( \frac{\text{SOC}}{100} \right) \times \te
 
 ### 4. Ground Velocity Calculation (SPD)
 The Input Capture timer evaluates elapsed timer counts between signal edges to determine frequency ($f$), which translates into speed using the wheel circumference profile:
+
 $$f = \frac{\text{Timer Clock Frequency (Hz)}}{\text{Captured Ticks}}$$
 $$\text{Speed (km/h)} = f \times \text{Wheel Calibration Constant}$$
 
 ### 5. Ultrasonic Distance Formula (Echo Pulse Width)
-To calculate distance ($D$) from the HC-SR04 sensors, the Input Capture timer tracks the time the Echo pin remains high ($\text{Ticks}_{\text{echo}}$) at a given Timer Clock Frequency:
+To calculate distance ($D$) from the HC-SR04 sensors, the Input Capture timer tracks the time the Echo pin remains high ($\text{Ticks}_{\text{echo}}$) at a given 
+
+Timer Clock Frequency:
 $$\text{Time (s)} = \frac{\text{Ticks}_{\text{echo}}}{\text{Timer Clock Frequency (Hz)}}$$
 $$\text{Distance (cm)} = \frac{\text{Time (s)} \times 34300 \text{ cm/s}}{2}$$
 
 ### 6. ADAS Forward Time-to-Collision (TTC)
 The forward collision avoidance framework computes real-time proximity degradation rates relative to instantaneous velocity to identify braking windows:
+
 $$\text{Time-to-Collision (s)} = \frac{\text{Front Distance (m)}}{\text{Speed (m/s)}}$$
 $$\text{Emergency State} = \begin{cases} 
       \text{ACTIVE (EBA Enabled),} & \text{if } \text{TTC} \le \text{Threshold}_{\text{critical}} \\
@@ -74,8 +78,11 @@ $$\text{Emergency State} = \begin{cases}
 ### 7. Side Blind-Spot Hazard Assessment
 
 Lateral warning vectors validate independent proximity thresholds ($D_{\text{side}}$) alongside minimum velocity constraints ($V_{\text{gate}}$) to filter stationary objects during deployment:
+
 $$\text{Left Hazard State} = \begin{cases} 1, & \text{if } D_{\text{left}} \le \text{Threshold}_{\text{lateral}} \ \ \text{AND} \ \ V_{\text{vehicle}} > V_{\text{gate}} \\ 0, & \text{otherwise} \end{cases}$$
+
 $$\text{Right Hazard State} = \begin{cases} 1, & \text{if } D_{\text{right}} \le \text{Threshold}_{\text{lateral}} \ \ \text{AND} \ \ V_{\text{vehicle}} > V_{\text{gate}} \\ 0, & \text{otherwise} \end{cases}$$
+
 ---
 
 ## 💻 Simulation & Deployment Guide
