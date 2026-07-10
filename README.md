@@ -72,11 +72,9 @@ $$\text{Distance (cm)} = \frac{\text{Time (s)} \times 34300 \text{ cm/s}}{2}$$
 The forward collision avoidance framework computes real-time proximity degradation rates relative to instantaneous velocity to identify braking windows:
 
 $$\text{Time-to-Collision (s)} = \frac{\text{Front Distance (m)}}{\text{Speed (m/s)}}$$
-
 $$\text{Emergency State} = \begin{cases} 
-\text{ACTIVE (EBA Enabled),} & \text{if } \text{TTC} \le \text{Threshold}_{\text{critical}} 
-
-      \text{WARNING (FCW Alert),} & \text{if } \text{Threshold}_{\text{critical}} < \text{TTC} \le \text{Threshold}_{\text{warning}} \\
+    \text{ACTIVE (EBA Enabled),} & \text{if } \text{TTC} \le \text{Threshold}_{\text{critical}} 
+     \text{WARNING (FCW Alert),} & \text{if } \text{Threshold}_{\text{critical}} < \text{TTC} \le \text{Threshold}_{\text{warning}} \\
       \text{SAFE,} & \text{if } \text{TTC} > \text{Threshold}_{\text{warning}}
       \end{cases}$$
    
