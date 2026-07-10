@@ -56,6 +56,7 @@ $$\text{Remaining Range (km)} = \left( \frac{\text{SOC}}{100} \right) \times \te
 The Input Capture timer evaluates elapsed timer counts between signal edges to determine frequency ($f$), which translates into speed using the wheel circumference profile:
 
 $$f = \frac{\text{Timer Clock Frequency (Hz)}}{\text{Captured Ticks}}$$
+
 $$\text{Speed (km/h)} = f \times \text{Wheel Calibration Constant}$$
 
 ### 5. Ultrasonic Distance Formula (Echo Pulse Width)
@@ -63,6 +64,7 @@ To calculate distance ($D$) from the HC-SR04 sensors, the Input Capture timer tr
 
 Timer Clock Frequency:
 $$\text{Time (s)} = \frac{\text{Ticks}_{\text{echo}}}{\text{Timer Clock Frequency (Hz)}}$$
+
 $$\text{Distance (cm)} = \frac{\text{Time (s)} \times 34300 \text{ cm/s}}{2}$$
 
 ### 6. ADAS Forward Time-to-Collision (TTC)
