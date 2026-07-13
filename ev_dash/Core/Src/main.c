@@ -24,10 +24,13 @@
 #include "ev_control.h"
 #include "ultrasonic.h"
 #include "adas.h"
+#include "fault.h"
+#include "uart_shell.h"
 
 
 EV_HandleTypeDef ev;
 ADAS_HandleTypeDef adas;
+Fault_HandleTypeDef flt;
 
 
 
@@ -56,6 +59,7 @@ TIM_HandleTypeDef htim3;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
+uint8_t rx_byte;
 
 
 /* USER CODE END PV */
@@ -96,9 +100,14 @@ int main(void)
 	  HAL_TIM_Base_Start_IT(&htim3);       /* TIM1: 100ms IRQ      */
 	  HAL_TIM_Base_Start(&htim2);       /* counter ever 1us */
 
+	  /* start interrupt on recing the data */
+	  HAL_UART_Receive_IT(&huart1, &rx_byte, 1);
+
       EV_Init(&ev); // ev
       HCSR04_Init(); // ultrasonic sensor
       ADAS_Init(&adas); // inital l r f -->400cm
+      Fault_Init(&flt); // flag-> none, active = 0
+      Shell_Init(&huart1, &ev, &adas, &flt);
 
 
 
@@ -123,29 +132,8 @@ int main(void)
 	          if (++ev_div >= 10) {
 	              ev_div = 0;
 
-	              /* Split floats into integer + decimal parts */
-	                  int spd  = (int)ev.speed_kmh;
-	                  int spdd = (int)(ev.speed_kmh  * 10.0f) % 10;
-	                  int soc  = (int)ev.soc;
-	                  int socd = (int)(ev.soc        * 10.0f) % 10;
-	                  int tmp  = (int)ev.motor_temp;
-	                  int tmpd = (int)(ev.motor_temp * 10.0f) % 10;
-	                  int trq  = (int)ev.motor_torque;
-	                  int acc  = (int)ev.accel_pedal;
-	                  int brk  = (int)ev.brake_pedal;
-	                  int rng  = (int)ev.range_km;
+	              print_status();
 
-
-	                  /* Line 1: EV data */
-	                  sprintf(msg,
-	                      "SPD:%d.%d SOC:%d.%d TRQ:%d TMP:%d.%d RNG:%d ACC:%d BRK:%d\r\n",
-	                      spd, spdd,
-	                      soc, socd,
-	                      trq,
-	                      tmp, tmpd,
-	                      rng,
-	                      acc, brk);
-	                  HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), 100);
 
 	          }
 	      }
@@ -157,22 +145,12 @@ int main(void)
 	    	  // update TTC, alarm, BSD
 	    	  ADAS_Update( &adas, &ev);
 
-	    	  // convert them to integer
-	    	  int ttcs = (int)adas. ttc_sec;
-	    	  int ttcd = (int)( adas. ttc_sec * 10.0f) % 10;
-	    	  int frnt = (int)adas.front_cm;
-	    	  int left = (int)adas.left_cm;
-	    	  int right= (int)adas.right_cm;
+	    	  /* validating motor temp, soc and collision, update fault flag */
+               Fault_Check(&flt, &ev, &adas);
+               // waiting to receive the data and process the cmd
+               Shell_Process();
 
-	    	  char msg[100];
-	    	  sprintf(msg, "F:%d L:%d R:%d  TTC:%d.%ds COL:%d BSD:%d%d  ALM:%d \r\n",   frnt, left, right,
-	    			  ttcs, ttcd,
-	    			  adas.collision_warn,
-					  adas.blindspot_left, adas.blindspot_right,
-					  (int)adas.alarm_priority);
-	    	  HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), 100);
 
-	    	  // read hrsc data and print it
 	      }
 
 
@@ -181,6 +159,15 @@ int main(void)
 
 
 	  /* USER CODE END 3 */
+}
+ /* UART RX byte - push to shell ring buffer, re-arm */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart->Instance == USART1)
+	{
+		shell_pushByte(rx_byte);
+		HAL_UART_Receive_IT(&huart1, &rx_byte, 1);
+	}
 }
 
 
@@ -448,7 +435,7 @@ static void MX_TIM3_Init(void)
   * @brief TIM4 Initialization Function
   * @param None
   * @retval None
-
+*/
 /**
   * @brief USART1 Initialization Function
   * @param None

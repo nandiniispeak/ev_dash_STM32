@@ -27,6 +27,7 @@ typedef struct {
     float   power_kw;       /* + drive, − regen       */
     float   range_km;       /* estimated range        */
     uint8_t drive_mode;     /* ECO / NORMAL / SPORT   */
+    VehicleState_t state;
 } EV_HandleTypeDef;
 
 /* ─── Constants ──────────────────────────────────────────────────────────── */

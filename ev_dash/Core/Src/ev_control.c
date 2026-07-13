@@ -45,6 +45,8 @@ void EV_Init(EV_HandleTypeDef *ev)
     ev->drive_mode = DRIVE_MODE_NORMAL;
     ev->motor_temp = 25.0f;    /* ambient */
     ev->speed_kmh = 10;
+    ev->state = STATE_PARKED;
+
 }
 
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -103,6 +105,35 @@ void EV_ReadADC(EV_HandleTypeDef *ev)
  */
 void EV_Update(EV_HandleTypeDef *ev, float dt)
 {
+	switch (ev->state)
+	        {
+	            case STATE_PARKED:
+	                ev->motor_torque = 0;
+	                ev->regen_level  = 0;
+	                /* Transition: pedal pressed → READY */
+	                if (ev->accel_pedal > 2.0f)
+	                    ev->state = STATE_READY;
+	                return;  /* skip physics when parked */
+
+	            case STATE_READY:
+	                ev->state = STATE_DRIVING;  /* or add a key/button interlock here */
+	                return;
+
+	            case STATE_DRIVING:
+	                if (ev->brake_pedal > EV_REGEN_THRESHOLD_PCT)
+	                    ev->state = STATE_REGEN;
+	                break;  /* fall through to normal physics */
+
+	            case STATE_REGEN:
+	                if (ev->brake_pedal <= EV_REGEN_THRESHOLD_PCT)
+	                    ev->state = STATE_DRIVING;
+	                break;  /* fall through — regen torque already set below */
+
+	            case STATE_FAULT:
+	                ev->motor_torque = 0;
+	              //  ev->speed_kmh    = 0;
+	                return;  /* freeze everything */
+	        }
     float mode_scale = TORQUE_MAP[ev->drive_mode];
 
     /* ── 1. Motor torque from accelerator ─────────────────────────────────── */
